@@ -13,7 +13,7 @@
   include_role:
     name: cloudflare
   vars:
-    subdomain: plex
+    subdomain: plex2
 
 - name: "Get {{user}} uid"
   shell: "id -u {{user}}"
@@ -26,12 +26,12 @@
 - name: Create plex directories
   file: "path={{item}} state=directory mode=0775 owner={{user}} group={{user}}"
   with_items:
-    - /opt/plex
+    - /opt/plex2
     - "{{plex.transcodes}}"
 
 - name: Stop and remove any existing container
   docker_container:
-    name: plex
+    name: plex2
     state: absent
 
 - name: Retrieve plex docker image
@@ -40,7 +40,7 @@
 
 - name: Check Preferences.xml exists
   stat:
-    path: "/opt/plex/Library/Application Support/Plex Media Server/Preferences.xml"
+    path: "/opt/plex2/Library/Application Support/Plex Media Server/Preferences.xml"
   register: plex_prefs
 
 - name: Check /dev/dri exists
@@ -78,35 +78,35 @@
 
 - name: Create and start container
   docker_container:
-    name: plex
+    name: plex2
     image: "plexinc/pms-docker:{{plex.tag}}"
     pull: yes
     published_ports:
-      - "127.0.0.1:32400:32400/tcp"
-      - "3005:3005/tcp"
-      - "8324:8324/tcp"
-      - "32469:32469/tcp"
-      - "1900:1900/udp"
-      - "32410:32410/udp"
-      - "32412:32412/udp"
-      - "32413:32413/udp"
-      - "32414:32414/udp"
-      - "33400:33400/tcp"
-      - "33443:33443/tcp"
+      - "127.0.0.1:42400:32400/tcp"
+      - "4005:3005/tcp"
+      - "9324:8324/tcp"
+      - "42469:32469/tcp"
+      - "2900:1900/udp"
+      - "42410:32410/udp"
+      - "42412:32412/udp"
+      - "42413:32413/udp"
+      - "42414:32414/udp"
+      - "43400:33400/tcp"
+      - "43443:33443/tcp"
     env:
       PLEX_UID: "{{uid.stdout}}"
       PLEX_GID: "{{gid.stdout}}"
       PLEX_CLAIM: "{{plex_claim.user_input| default (omit)}}"
       CHANGE_CONFIG_DIR_OWNERSHIP: false
-      ADVERTISE_IP: "http://plex.{{domain}}:80/,https://plex.{{domain}}:443/"
-      VIRTUAL_HOST: "plex.{{domain}}"
+      ADVERTISE_IP: "http://plex2.{{domain}}:80/,https://plex2.{{domain}}:443/"
+      VIRTUAL_HOST: "plex2.{{domain}}"
       VIRTUAL_PORT: 32400
-      LETSENCRYPT_HOST: "plex.{{domain}}"
+      LETSENCRYPT_HOST: "plex2.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
       HTTPS_METHOD: noredirect
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "/opt/plex:/config"
+      - "/opt/plex2:/config"
       - "{{plex.transcodes}}:/transcode"
       - "/mnt/unionfs/Media:/data"
       - "/mnt:/mnt"
@@ -117,7 +117,7 @@
     networks:
       - name: cloudbox
         aliases:
-          - plex
+          - plex2
     state: started
 
 # we need this here because sometimes after a restore, docker will set this transcodes folder to root, dont ask why, but it does...
@@ -135,12 +135,12 @@
 
 - name: Wait for Plug-ins folder to be created by Plex
   wait_for:
-    path: "/opt/plex/Library/Application Support/Plex Media Server/Plug-ins"
+    path: "/opt/plex2/Library/Application Support/Plex Media Server/Plug-ins"
     state: present
 
 - name: Create plex_autoscan Logs folder
   file:
-    path: "/opt/plex/Library/Logs/Plex Media Server"
+    path: "/opt/plex2/Library/Logs/Plex Media Server"
     state: directory
     mode: 0775
     owner: "{{user}}"
