@@ -21,6 +21,7 @@
     - { role: scripts, tags: ['core', 'cloudbox', 'mediabox', 'feederbox', 'scripts'] }
     - { role: nginx-proxy, tags: ['core', 'cloudbox', 'mediabox', 'feederbox', 'nginx-proxy'] }
     - { role: plex, tags: ['cloudbox', 'mediabox', 'plex'] }
+    - { role: plex2, tags: ['cloudbox2', 'mediabox2', 'plex2'] }
     - { role: plexpy, tags: ['cloudbox', 'mediabox', 'plexpy'] }
     - { role: plexrequests, tags: ['cloudbox', 'mediabox', 'plexrequests'] }
     - { role: plex_autoscan, tags: ['cloudbox', 'mediabox', 'plex_autoscan'] }
